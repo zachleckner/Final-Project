@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CommonPage</title>
+    <link rel="stylesheet" href="Core.css">
+</head>
+<body>
+    <row class = "rTitle">
+        Indian Pop Radio Manager
+    </row>
+    <container class="vContainer">
+        <column class="cNav">
+            <row class="rNav">
+                <a href="/MainPage">Home</a>
+            </row>
+            <row class="rNav">
+                <% if (loggedInProducerSSN) { %>
+                    <a href="/MainPage">Back</a>
+                <% } else { %>
+                    <a href="/Producer">Back</a>
+                <% } %>
+            </row>
+            <row class="row">
+                Manager
+            </row>
+            <row class="row" style="border-left: 4px solid #6ad866;">
+                Producer
+            </row>
+            <row class="row">
+                DJ
+            </row>
+        </column>
+        <column class="cSelect">
+            <row class="rHeading">
+                DJ Select
+            </row>
+            <row class="rSelect">
+                <ul id="djList">
+
+                </ul>
+            </row>
+        </column>
+        <column class = "cMain">
+            <row class = "rHeading">
+                Time Slot List
+            </row>
+            <row class = "row">
+                <container class="pContainer">
+                    <column class="column" id="djColumn">
+
+                    </column>
+                </container>
+                <container class="popup">
+                    <container class="pContainer">
+                        <column class="column">
+                            <row class="rHeading" style="background-color: #201E1E;">
+                                PlayList Editor
+                                <a href="#" class="closeButton" style="font-size: 20px; ;">X</a>
+                            </row>
+                            <row class="row2">
+                                <ul id="songList">
+
+                                </ul>
+                            </row>
+                        </column>
+                    </container>
+                </container>
+            </row>
+        </column>
+    </container>
+    <script src="/js/Producer/producer2.js"></script>
+</body>
+</html>

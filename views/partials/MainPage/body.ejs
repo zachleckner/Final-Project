@@ -1,0 +1,43 @@
+<row class="rTitle">
+    <form method="post" action="/MainPage/login">
+        User Select: <input type="text" id="ssn" name="ssn">
+        <button type="submit">Submit</button>
+    </form>
+</row>
+<container class="vContainer">
+    <column class="cNav">
+        <row class="rNav">
+            Home
+        </row>
+        <row class="rNav">
+            <% if (loggedInProducer) { %>
+                    <a href="/logout">Logout</a>
+            <% } else { %>
+                    Not signed in
+            <% } %>
+        </row>
+        <row class="row">
+            Manager
+        </row>
+        <row class="row">
+            <a href="/Producer">Producer</a>
+        </row>
+        <row class="row">
+            DJ
+        </row>
+    </column>
+    <column class="cSelect">
+        <row class="rHeading">
+        </row>
+        <row class="row">
+        </row>
+    </column>
+    <column class="cMain">
+        <row class="rHeading">
+        </row>
+        <row class="row" style="font-size: 4em; color: #e0ffdf;">
+            Welcome to Radio Manager
+        </row>
+    </column>
+    <script src="/js/main.js"></script>
+</container>
