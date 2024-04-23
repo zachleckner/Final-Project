@@ -2,10 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const producer = require('./handlers/producerRouter'); 
 const cookieParser = require('cookie-parser');
-mongoose.connect('mongodb+srv://zachleckner:1158@cluster0.0fdmdby.mongodb.net/');
+mongoose.connect('mongodb://localhost:27017/myDatabase');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 const Producer = require('./models/Producer');
+//Manger
 
 app.set('view engine', 'ejs');
 app.use(express.json());
@@ -59,6 +60,10 @@ app.get('/Producer', function(req, res) {
 app.get('/Producer2', function(req, res) {
     res.render('pages/Producer2');
 });
+
+app.get('/Manager', function(req, res) {
+    res.render('pages/Manager');
+})
 
 app.use('/', producer);
 
