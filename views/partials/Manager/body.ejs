@@ -5,65 +5,65 @@
     <link rel="stylesheet" href="Core.css">
 </head>
 <body>
-    <row class = "rTitle">
+    <div class="titleRow">
         Indian Pop Radio Manager
-    </row>
-    <container class="vContainer">
-        <column class="cNav">
-            <row class="rNav">
+    </div>
+    <div class="verticalContainer">
+        <div class="navigationColumn">
+            <div class="navigationRow">
                 <a href="/MainPage">Home</a>
-            </row>
-            <row class="rNav">
+            </div>
+            <div class="backNavigationRow">
                 <a href="/MainPage">Back</a>
-            </row>
-            <row class="row" style="border-left: 4px solid #6ad866;">
+            </div>
+            <div class="managerRow" style="border-left: 4px solid #6ad866;">
                 Manager
-            </row>
-            <row class="row" >
-                Producer
-            </row>
-            <row class="row">
+            </div>
+            <div class="producerRow">
+                <a href="/Producer">Producer</a>
+            </div>
+            <div class="djRow">
                 DJ
-            </row>
-        </column>
-        <column class="cSelect">
-            <row class="rHeading">
+            </div>
+        </div>
+        <div class="selectionColumn">
+            <div class="headingRow" id="listHeading">
                 Producer Select
-            </row>
-            <row class="rSelect">
-                <ul id="djList">
-
+            </div>
+            <div class="listRow">
+                <ul id="dynamicList">
+                    <!-- Producers or DJs will be dynamically populated here -->
                 </ul>
-            </row>
-        </column>
-        <column class = "cMain">
-            <row class = "rHeading">
+            </div>
+        </div>
+        <div class="mainContentColumn">
+            <div class="timeSlotHeading">
                 Time Slot List
-            </row>
-            <row class = "row">
-                <container class="pContainer">
-                    <column class="column" id="djColumn">
-
-                    </column>
-                </container>
-                <container class="popup">
-                    <container class="pContainer">
-                        <column class="column">
-                            <row class="rHeading" style="background-color: #201E1E;">
-                                PlayList Editor
-                                <a href="#" class="closeButton" style="font-size: 20px; ;">X</a>
-                            </row>
-                            <row class="row">
-                                <ul id="songList">
-
+            </div>
+            <div class="timeSlotRow">
+                <div class="panelContainer">
+                    <div class="slotColumn" id="timeSlotColumn">
+                        <!-- Time slots will be dynamically populated here -->
+                    </div>
+                </div>
+                <div class="editPopup">
+                    <div class="popupContainer">
+                        <div class="editorColumn">
+                            <div class="popupHeading" style="background-color: #201E1E;">
+                                Playlist Editor
+                                <a href="#" class="closeEditor" style="font-size: 20px;">X</a>
+                            </div>
+                            <div class="songListRow">
+                                <ul id="playlist">
+                                    <!-- Songs will be dynamically populated here -->
                                 </ul>
-                            </row>
-                        </column>
-                    </container>
-                </container>
-            </row>
-        </column>
-    </container>
-    <script src="/js/Producer/producer.js"></script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/Manager/Manager.js"></script>
 </body>
 </html>
