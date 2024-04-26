@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CommonPage</title>
+    <link rel="stylesheet" href="Core.css">
+</head>
+<body>
+    <div class="titleRow">
+        Indian Pop Radio Manager
+    </div>
+    <div class="verticalContainer">
+        <div class="navigationColumn">
+            <div class="navigationRow">
+                <a href="/MainPage">Home</a>
+            </div>
+            <div class="backNavigationRow">
+                <a href="/MainPage">Back</a>
+            </div>
+            <div class="managerRow" style="border-left: 4px solid #6ad866;">
+                Manager
+            </div>
+            <div class="producerRow">
+                <a href="/Producer">Producer</a>
+            </div>
+            <div class="djRow">
+                DJ
+            </div>
+        </div>
+        <div class="selectionColumn">
+            <div class="headingRow" id="listHeading">
+                Producer Select
+            </div>
+            <div class="listRow">
+                <ul id="dynamicList">
+                    <!-- Producers or DJs will be dynamically populated here -->
+                </ul>
+            </div>
+        </div>
+        <div class="mainContentColumn">
+            <div class="timeSlotHeading">
+                Time Slot List
+            </div>
+            <div class="timeSlotRow">
+                <div class="panelContainer">
+                    <div class="slotColumn" id="timeSlotColumn">
+                        <!-- Time slots will be dynamically populated here -->
+                    </div>
+                </div>
+                <div class="editPopup">
+                    <div class="popupContainer">
+                        <div class="editorColumn">
+                            <div class="popupHeading" style="background-color: #201E1E;">
+                                Playlist Editor
+                                <a href="#" class="closeEditor" style="font-size: 20px;">X</a>
+                            </div>
+                            <div class="songListRow">
+                                <ul id="playlist">
+                                    <!-- Songs will be dynamically populated here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/Manager/Manager.js"></script>
+</body>
+</html>

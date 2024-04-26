@@ -1,4 +1,4 @@
-body {
+/* body {
     overflow: hidden;
     margin: 0;
     background-color: #303030;
@@ -154,4 +154,260 @@ select {
     margin: 3px;
     color:#61AD68;
     background-color: #3b3838;
+} */
+
+body {
+    overflow: hidden;
+    margin: 0;
+    background-color: #303030;
+    font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #6ad866;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.verticalContainer, .vContainer {
+    display: flex;
+    flex-wrap: wrap;
+    height: 97vh;
+    width: 100vw;
+    border: 1px solid #000000;
+}
+
+.panelContainer, .popupContainer, .pContainer {
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    width: 100%;
+    border: 1px solid #000000;
+}
+
+.navigationColumn, .selectionColumn, .mainContentColumn, .column, .cNav, .cSelect, .cMain {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border: 1px solid #000000;
+}
+
+.navigationColumn, .cNav { 
+    flex: .10;
+    background-color: #201E1E;
+}
+
+.selectionColumn, .cSelect {
+    flex: .25;
+    background-color: #262626;
+}
+
+.mainContentColumn, .cMain {
+    flex: .7;
+}
+
+.titleRow, .navigationRow, .backNavigationRow, .managerRow, .producerRow, .djRow,
+.headingRow, .listRow, .timeSlotHeading, .timeSlotRow, .editPopup, .slotColumn, .editorColumn,
+.row, .rHeading, .rNav, .rTitle, .rSelect, .rSlot {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    border: 1px solid #000000;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.navigationRow, .backNavigationRow, .rNav {
+    flex: .5;
+}
+
+.headingRow, .timeSlotHeading, .popupHeading, .rHeading {
+    flex: .142; 
+    color: #e0ffdf;
+    font-size: 2em;
+    background-color: #262626;
+}
+
+.titleRow, .rTitle {
+    height: 3vh; 
+    justify-content: left;  
+    color: #e0ffdf;
+    background-color: #201E1E;
+}
+
+.listRow, .rSelect {
+    justify-content: left;
+    align-items: baseline;
+}
+
+.timeSlotRow, .rSlot {
+    flex: .125;
+    color: #e0ffdf;
+}
+
+.titleRow:hover, .navigationRow:hover, .backNavigationRow:hover, .row:hover, .rNav:hover {
+    color: #12af0d; 
+}
+
+ul {
+    text-align: left;
+    list-style: none;
+    width: 80%;
+}
+
+li {
+    border: 2px solid #000;
+    margin: .7em;
+    padding: .5em;
+    background-color: #201E1E;
+}
+
+li:hover {
+    color: #12af0d; 
+}
+
+.popup, .editPopup {
+    display: none;
+    top: 55%;
+    left: 67%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    height: 75%;
+    width: 50%;
+    background-color: #262626;
+    border: 1px solid #000; 
+}
+  
+.closeButton, .closeEditor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px; 
+    text-decoration: none; 
+    color: #61AD68;
+}
+
+button {
+    margin: 3px;
+    color:#61AD68;
+    background-color: #2c2828;
+}
+
+option {
+    margin: 3px;
+    color:#61AD68;
+    background-color: #2c2828;
+}
+
+select {
+    margin: 3px;
+    color:#61AD68;
+    background-color: #3b3838;
+}
+.form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    background-color: #1c1c1c;
+    padding: 20px;
+    border-radius: 5px;
+    color: #00b300;
+}
+
+.form-container h2 {
+    margin-top: 0;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container label {
+    margin-bottom: 5px;
+}
+
+.form-container input {
+    margin-bottom: 10px;
+    background-color: #333333;
+    color: #00b300;
+    border: none;
+    padding: 5px;
+}
+
+.form-container button {
+    background-color: #00b300;
+    color: #1c1c1c;
+    border: none;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+
+/* For Compare popup*/
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.popup-container {
+    background-color: #2b2b2b;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    color: #fff;
+}
+
+.comparison-content {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.producer-songs,
+.dj-songs {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#closePopupButton {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#closePopupButton:hover {
+    background-color: #45a049;
 }
