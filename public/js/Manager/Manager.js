@@ -126,26 +126,50 @@ class Manager {
         }
         const timeslotContainer = document.createElement("div");
         timeslotContainer.className = "timeslot-container";
+    
         this.timeslots.forEach(slot => {
             const timeslotDiv = document.createElement("div");
             timeslotDiv.className = 'timeslot-entry';
             timeslotDiv.innerHTML = `
                 <span>Date: ${slot.date}, Start: ${slot.start}, End: ${slot.end}</span>
                 <button class="edit-button" data-id="${slot.id}">Edit</button>
+                <button class="delete-button" data-id="${slot.id}">Delete</button>
             `;
             timeslotContainer.appendChild(timeslotDiv);
         });
         this.timeslotColumn.appendChild(timeslotContainer);
     
-        // Add event listener to edit buttons
-        const editButtons = document.querySelectorAll('.edit-button');
-        editButtons.forEach(button => {
+        this.setupDeleteButtons();
+    }
+    
+    setupDeleteButtons() {
+        const deleteButtons = document.querySelectorAll('.delete-button');
+        deleteButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const timeslotId = button.getAttribute('data-id');
-                this.showEditTimeslotForm(timeslotId);
+                this.deleteTimeslot(timeslotId);
             });
         });
     }
+    
+    async deleteTimeslot(timeslotId) {
+        try {
+            const response = await fetch(`/deleteTimeslot/${timeslotId}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            if (data.success) {
+                console.log('Timeslot deleted successfully:', data.message);
+                this.timeslots = this.timeslots.filter(slot => slot.id !== timeslotId);
+                this.displayTimeslots();  // Refresh the timeslot display
+            } else {
+                console.error('Failed to delete timeslot:', data.message);
+            }
+        } catch (error) {
+            console.error('Error deleting timeslot:', error);
+        }
+    }
+    
 
     showEditTimeslotForm(timeslotId) {
         // Find the timeslot by ID
@@ -188,32 +212,32 @@ class Manager {
         });
     }
 
-    async updateTimeslot(timeslotId, updatedData) {
-        console.log("Updating timeslot with ID:", timeslotId, "Data:", updatedData);
-        try {
-            const response = await fetch(`/updateTimeslot/${timeslotId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ...updatedData,
-                    producerSSN: this.currentProducerSSN,
-                    djSSN: this.selectedDJSSN
-                }),
-            });
-    
-            const data = await response.json();
-            if (data.success) {
-                console.log('Timeslot updated successfully:', data.message);
-                this.loadTimeslots(this.currentProducerSSN, this.selectedDJSSN);
-            } else {
-                console.error('Failed to update timeslot:', data.message);
-            }
-        } catch (error) {
-            console.error('Error updating timeslot:', error);
+async updateTimeslot(timeslotId, updatedData) {
+    console.log("Updating timeslot with ID:", timeslotId, "Data:", updatedData);
+    try {
+        const response = await fetch(`/updateTimeslot/${timeslotId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ...updatedData,
+                producerSSN: this.currentProducerSSN,
+                djSSN: this.selectedDJSSN
+            }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            console.log('Timeslot updated successfully:', data.message);
+            this.loadTimeslots(this.currentProducerSSN, this.selectedDJSSN);
+        } else {
+            console.error('Failed to update timeslot:', data.message);
         }
+    } catch (error) {
+        console.error('Error updating timeslot:', error);
     }
+}
 
     showAddTimeslotForm() {
         if (!this.currentProducerSSN) {

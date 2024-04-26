@@ -1,3 +1,4 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const producer = require('./handlers/producerRouter');
@@ -73,6 +74,23 @@ app.get('/Manager', function (req, res) {
 });
 
 app.use('/', producer);
+  
+
+app.delete('/deleteTimeslot/:timeslotId', async (req, res) => {
+  const { timeslotId } = req.params;
+  try {
+      const result = await Timeslot.deleteOne({ id: timeslotId });
+      if(result.deletedCount === 1) {
+          res.json({ success: true, message: 'Timeslot deleted successfully' });
+      } else {
+          res.status(404).json({ success: false, message: 'Timeslot not found' });
+      }
+  } catch (error) {
+      console.error('Failed to delete timeslot:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 
 app.get('/timeslots', async (req, res) => {
   const { producerSSN, djSSN } = req.query;
