@@ -3,7 +3,6 @@ const router = express.Router();
 const Producer = require('../models/Producer');
 const DJ = require('../models/DJ');
 
-// Route to list all producers for the manager page
 router.get('/producers', async (req, res) => {
     try {
         const producers = await Producer.find();
@@ -13,7 +12,6 @@ router.get('/producers', async (req, res) => {
     }
 });
 
-// Route to show a specific producer's DJs
 router.get('/Manager', async (req, res) => {
     const producerSSN = req.query.ssn;
     if (!producerSSN) {
@@ -21,15 +19,13 @@ router.get('/Manager', async (req, res) => {
     }
     
     try {
-        // Find the producer by SSN
         const producer = await Producer.findOne({ ssn: producerSSN });
         if (!producer) {
             return res.status(404).send("Producer not found");
         }
         
-        // Find all DJs with the producer's SSN
         const djs = await DJ.find({ pssn: producerSSN });
-        res.render('producerDJsList', { producer, djs }); // Assuming you have an EJS template named producerDJsList
+        res.render('producerDJsList', { producer, djs });
     } catch (error) {
         res.status(500).send("Internal Server Error");
     }

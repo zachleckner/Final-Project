@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const addTimeslotButton = document.createElement('button');
         addTimeslotButton.textContent = 'Add Time Slot';
         addTimeslotButton.addEventListener('click', function () {
-            manager.showAddTimeslotForm(); // Use the stored SSN within the class
+            manager.showAddTimeslotForm();
         });
         timeSlotHeading.appendChild(addTimeslotButton);
     } else {
@@ -31,7 +31,7 @@ class Manager {
     }
 
     async initialize(producerSSN) {
-        this.currentProducerSSN = producerSSN; // Set SSN initially
+        this.currentProducerSSN = producerSSN;
         if (producerSSN) {
             await this.loadDJs(producerSSN);
         } else {
@@ -162,11 +162,9 @@ class Manager {
             this.showComparisonPopup(data.producerSongs, data.djSongs);
           } else {
             console.error('Error comparing songs:', response.status);
-            // Display an error message to the user or handle the error as needed
           }
         } catch (error) {
           console.error('Error comparing songs:', error);
-          // Display an error message to the user or handle the error as needed
         }
       }
 
@@ -180,11 +178,9 @@ class Manager {
             } else {
                 const errorData = await response.json();
                 console.error('Error comparing songs:', errorData.error);
-                // Display an error message to the user or handle the error as needed
             }
         } catch (error) {
             console.error('Error comparing songs:', error);
-            // Display an error message to the user or handle the error as needed
         }
     }
 
