@@ -10,7 +10,7 @@
             Home
         </row>
         <row class="rNav">
-            <% if (loggedInProducer) { %>
+            <% if (loggedInProducer || loggedInManager ) { %>
                     <a href="/logout">Logout</a>
             <% } else { %>
                     Not signed in

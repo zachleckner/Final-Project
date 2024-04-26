@@ -15,6 +15,7 @@ app.use(bodyParser.json());
 const Producer = require('./models/Producer');
 const Timeslot = require('./models/Timeslot');
 const Song = require('./models/Song');
+const Manager = require('./models/Manager');
 
 // Manger
 app.set('view engine', 'ejs');
@@ -24,12 +25,14 @@ app.use(cookieParser());
 
 app.get('/logout', function (req, res) {
   res.clearCookie('loggedInProducer');
+  res.clearCookie('loggedInManager');
   res.redirect('/MainPage');
 });
 
 app.get('/MainPage', function (req, res) {
   const loggedInProducer = req.cookies.loggedInProducer;
-  res.render('pages/MainPage', { loggedInProducer });
+  const loggedInManager = req.cookies.loggedInManager;
+  res.render('pages/MainPage', { loggedInProducer, loggedInManager });
 });
 
 app.get('/Producer', (req, res) => {
@@ -49,10 +52,21 @@ app.get('/Producer2', (req, res) => {
 
 app.post('/MainPage/login', async (req, res) => {
   const ssn = req.body.ssn;
-  await Producer.findOne({ ssn });
-  res.cookie('loggedInProducer', ssn);
-  res.redirect('/MainPage');
+  const producer = await Producer.findOne({ ssn });
+  const manager = await Manager.findOne({ ssn });
+
+  if (producer) {
+    res.cookie('loggedInProducer', ssn);
+    res.redirect('/MainPage');
+  } else if (manager) {
+    res.cookie('loggedInManager', ssn);
+    res.redirect('/MainPage');
+  } else {
+    // Handle case when neither producer nor manager is found
+    res.redirect('/MainPage');
+  }
 });
+
 
 app.get('/', function (req, res) {
   res.redirect('/MainPage');
