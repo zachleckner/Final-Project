@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (timeSlotHeading) {
         const addTimeslotButton = document.createElement('button');
         addTimeslotButton.textContent = 'Add Time Slot';
-        addTimeslotButton.addEventListener('click', function() {
+        addTimeslotButton.addEventListener('click', function () {
             manager.showAddTimeslotForm(); // Use the stored SSN within the class
         });
         timeSlotHeading.appendChild(addTimeslotButton);
@@ -31,7 +31,7 @@ class Manager {
     }
 
     async initialize(producerSSN) {
-        this.currentProducerSSN = producerSSN; // Set SSN initially or whenever it's available
+        this.currentProducerSSN = producerSSN; // Set SSN initially
         if (producerSSN) {
             await this.loadDJs(producerSSN);
         } else {
@@ -63,6 +63,23 @@ class Manager {
         } catch (error) {
             console.error('Error adding timeslot:', error);
         }
+    }
+
+    displayItems(items, headingText, clickHandler, isProducer) {
+        this.listHeading.textContent = headingText;
+        this.dynamicList.innerHTML = '';
+        items.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item.name;
+            li.addEventListener("click", () => {
+                clickHandler(item.ssn);
+                if (isProducer) {
+                    this.currentProducerSSN = item.ssn;
+                    window.history.pushState({ ssn: item.ssn }, '', `?ssn=${item.ssn}`);
+                }
+            });
+            this.dynamicList.appendChild(li);
+        });
     }
 
     async loadProducers() {
@@ -101,20 +118,103 @@ class Manager {
         }
     }
 
-    displayItems(items, headingText, clickHandler, isProducer) {
-        this.listHeading.textContent = headingText;
-        this.dynamicList.innerHTML = ''; // Clear the list before adding new items
-        items.forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = item.name;
-            li.addEventListener("click", () => {
-                clickHandler(item.ssn);
-                if (isProducer) {
-                    this.currentProducerSSN = item.ssn; // Update SSN when a producer is selected
-                    window.history.pushState({ ssn: item.ssn }, '', `?ssn=${item.ssn}`);
-                }
+    displayTimeslots() {
+        this.timeslotColumn.innerHTML = '';
+        if (this.timeslots.length === 0) {
+            this.timeslotColumn.textContent = 'No timeslots available';
+            return;
+        }
+        const timeslotContainer = document.createElement("div");
+        timeslotContainer.className = "timeslot-container";
+
+        this.timeslots.forEach(slot => {
+            const timeslotDiv = document.createElement("div");
+            timeslotDiv.className = 'timeslot-entry';
+            timeslotDiv.innerHTML = `
+                <span>Date: ${slot.date}, Start: ${slot.start}, End: ${slot.end}</span>
+                <button class="edit-button" data-id="${slot.id}">Edit</button>
+                <button class="delete-button" data-id="${slot.id}">Delete</button>
+                <button class="compare-button" data-timeslot-id="${slot.id}">Compare Songs</button>
+            `;
+            timeslotContainer.appendChild(timeslotDiv);
+        });
+        this.timeslotColumn.appendChild(timeslotContainer);
+        this.setupEditButtons();
+        this.setupDeleteButtons();
+        this.setupCompareButtons();
+    }
+
+    setupCompareButtons() {
+        const compareButtons = document.querySelectorAll('.compare-button');
+        compareButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const timeslotId = button.getAttribute('data-timeslot-id');
+                this.compareSongsForTimeslot(timeslotId);
             });
-            this.dynamicList.appendChild(li);
+        });
+    }
+    async compareSongsForTimeslot(timeslotId) {
+        try {
+          const response = await fetch(`/compareSongsForTimeslot/${timeslotId}`);
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Compare song data:", data);
+            this.showComparisonPopup(data.producerSongs, data.djSongs);
+          } else {
+            console.error('Error comparing songs:', response.status);
+            // Display an error message to the user or handle the error as needed
+          }
+        } catch (error) {
+          console.error('Error comparing songs:', error);
+          // Display an error message to the user or handle the error as needed
+        }
+      }
+
+    async compareSongs(producerSSN, djSSN) {
+        try {
+            const response = await fetch(`/compareSongs?producerSSN=${producerSSN}&djSSN=${djSSN}`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Compare song data:", data);
+                this.showComparisonPopup(data.producerSongs, data.djSongs);
+            } else {
+                const errorData = await response.json();
+                console.error('Error comparing songs:', errorData.error);
+                // Display an error message to the user or handle the error as needed
+            }
+        } catch (error) {
+            console.error('Error comparing songs:', error);
+            // Display an error message to the user or handle the error as needed
+        }
+    }
+
+    showComparisonPopup(producerSongs, djSongs) {
+        const popupOverlay = document.createElement('div');
+        popupOverlay.className = 'popup-overlay';
+        popupOverlay.innerHTML = `
+            <div class="popup-container">
+                <h2>Song Comparison</h2>
+                <div class="comparison-content">
+                    <div class="producer-songs">
+                        <h3>Producer Songs:</h3>
+                        <ul>
+                            ${producerSongs.map(song => `<li>${song.title}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="dj-songs">
+                        <h3>DJ Songs:</h3>
+                        <ul>
+                            ${djSongs.map(song => `<li>${song.title}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <button type="button" id="closePopupButton">Close</button>
+            </div>
+        `;
+        document.body.appendChild(popupOverlay);
+
+        document.getElementById('closePopupButton').addEventListener('click', () => {
+            document.body.removeChild(popupOverlay);
         });
     }
 
@@ -126,22 +226,24 @@ class Manager {
         }
         const timeslotContainer = document.createElement("div");
         timeslotContainer.className = "timeslot-container";
-    
+
         this.timeslots.forEach(slot => {
             const timeslotDiv = document.createElement("div");
             timeslotDiv.className = 'timeslot-entry';
             timeslotDiv.innerHTML = `
-                <span>Date: ${slot.date}, Start: ${slot.start}, End: ${slot.end}</span>
-                <button class="edit-button" data-id="${slot.id}">Edit</button>
-                <button class="delete-button" data-id="${slot.id}">Delete</button>
-            `;
+            <span>Date: ${slot.date}, Start: ${slot.start}, End: ${slot.end}</span>
+            <button class="edit-button" data-id="${slot.id}">Edit</button>
+            <button class="delete-button" data-id="${slot.id}">Delete</button>
+            <button class="compare-button" data-timeslot-id="${slot.id}">Compare Songs</button>
+        `;
             timeslotContainer.appendChild(timeslotDiv);
         });
         this.timeslotColumn.appendChild(timeslotContainer);
-    
+        this.setupEditButtons();
         this.setupDeleteButtons();
+        this.setupCompareButtons();
     }
-    
+
     setupDeleteButtons() {
         const deleteButtons = document.querySelectorAll('.delete-button');
         deleteButtons.forEach(button => {
@@ -151,7 +253,7 @@ class Manager {
             });
         });
     }
-    
+
     async deleteTimeslot(timeslotId) {
         try {
             const response = await fetch(`/deleteTimeslot/${timeslotId}`, {
@@ -169,12 +271,21 @@ class Manager {
             console.error('Error deleting timeslot:', error);
         }
     }
-    
+
+    setupEditButtons() {
+        const editButtons = document.querySelectorAll('.edit-button');
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const timeslotId = button.getAttribute('data-id');
+                this.showEditTimeslotForm(timeslotId);
+            });
+        });
+    }
 
     showEditTimeslotForm(timeslotId) {
         // Find the timeslot by ID
         const timeslot = this.timeslots.find(slot => slot.id === timeslotId);
-    
+
         const formOverlay = document.createElement('div');
         formOverlay.className = 'form-overlay';
         formOverlay.innerHTML = `
@@ -194,7 +305,7 @@ class Manager {
             </div>
         `;
         document.body.appendChild(formOverlay);
-    
+
         const form = document.getElementById('editTimeslotForm');
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -202,47 +313,56 @@ class Manager {
             const date = form.date.value;
             const start = form.start.value;
             const end = form.end.value;
-    
+
             await this.updateTimeslot(timeslotId, { date, start, end });
             document.body.removeChild(formOverlay);
         });
-    
+
         document.getElementById('cancelButton').addEventListener('click', () => {
             document.body.removeChild(formOverlay);
         });
     }
-
-async updateTimeslot(timeslotId, updatedData) {
-    console.log("Updating timeslot with ID:", timeslotId, "Data:", updatedData);
-    try {
-        const response = await fetch(`/updateTimeslot/${timeslotId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                ...updatedData,
-                producerSSN: this.currentProducerSSN,
-                djSSN: this.selectedDJSSN
-            }),
+    setupEditButtons() {
+        const editButtons = document.querySelectorAll('.edit-button');
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const timeslotId = button.getAttribute('data-id');
+                this.showEditTimeslotForm(timeslotId);
+            });
         });
-
-        const data = await response.json();
-        if (data.success) {
-            console.log('Timeslot updated successfully:', data.message);
-            this.loadTimeslots(this.currentProducerSSN, this.selectedDJSSN);
-        } else {
-            console.error('Failed to update timeslot:', data.message);
-        }
-    } catch (error) {
-        console.error('Error updating timeslot:', error);
     }
-}
+
+    async updateTimeslot(timeslotId, updatedData) {
+        console.log("Updating timeslot with ID:", timeslotId, "Data:", updatedData);
+        try {
+            const response = await fetch(`/updateTimeslot/${timeslotId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...updatedData,
+                    producerSSN: this.currentProducerSSN,
+                    djSSN: this.selectedDJSSN
+                }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                console.log('Timeslot updated successfully:', data.message);
+                this.loadTimeslots(this.currentProducerSSN, this.selectedDJSSN);
+            } else {
+                console.error('Failed to update timeslot:', data.message);
+            }
+        } catch (error) {
+            console.error('Error updating timeslot:', error);
+        }
+    }
 
     showAddTimeslotForm() {
         if (!this.currentProducerSSN) {
             console.error('Producer SSN is null, cannot show add timeslot form.');
-            return; 
+            return;
         }
         const formOverlay = document.createElement('div');
         formOverlay.className = 'form-overlay';
@@ -262,21 +382,21 @@ async updateTimeslot(timeslotId, updatedData) {
             </div>
         `;
         document.body.appendChild(formOverlay);
-    
+
         const form = document.getElementById('addTimeslotForm');
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
             const date = form.date.value;
             const start = form.start.value;
             const end = form.end.value;
-    
+
             await this.addTimeslot(this.currentProducerSSN, this.selectedDJSSN, { date, start, end });
             document.body.removeChild(formOverlay);
         });
-    
+
         document.getElementById('cancelButton').addEventListener('click', () => {
             document.body.removeChild(formOverlay);
         });
     }
-    
+
 }

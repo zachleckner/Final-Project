@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 
 const Producer = require('./models/Producer');
 const Timeslot = require('./models/Timeslot');
+const Song = require('./models/Song');
 
 // Manger
 app.set('view engine', 'ejs');
@@ -128,7 +129,7 @@ app.put('/updateTimeslot/:timeslotId', async (req, res) => {
 
 
 app.post('/addTimeslot', async (req, res) => {
-  const { producerSSN, djSSN, date, start, end } = req.body;
+  const { producerSSN, djSSN, date, start, end, defaultSongs } = req.body;
 
   try {
     // Generate a new unique ID for the timeslot
@@ -141,8 +142,8 @@ app.post('/addTimeslot', async (req, res) => {
       date,
       start,
       end,
+      dsongs: defaultSongs,
       psongs: [],
-      dsongs: [],
       dssn: djSSN,
       pssn: producerSSN
     });
@@ -155,7 +156,48 @@ app.post('/addTimeslot', async (req, res) => {
   }
 });
 
+app.get('/compareSongsForTimeslot/:timeslotId', async (req, res) => {
+  const timeslotId = req.params.timeslotId;
+  console.log('Compare songs route called with timeslotId:', req.params.timeslotId);
+  try {
+      // Find the timeslot by ID
+      const timeslot = await Timeslot.findOne({ id: timeslotId });
 
+      if (!timeslot) {
+          return res.status(404).json({ error: 'Timeslot not found' });
+      }
+
+      const producerSongs = await Song.find({ id: { $in: timeslot.psongs } });
+      const djSongs = await Song.find({ id: { $in: timeslot.dsongs } });
+
+      res.json({ producerSongs, djSongs });
+  } catch (error) {
+      console.error('Error comparing songs:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/addProducerSong/:timeslotId', async (req, res) => {
+  const { timeslotId } = req.params;
+  const { songId } = req.body;
+
+  try {
+    const updatedTimeslot = await Timeslot.findOneAndUpdate(
+      { id: timeslotId },
+      { $push: { psongs: songId } },
+      { new: true }
+    );
+
+    if (updatedTimeslot) {
+      res.json({ success: true, message: 'Producer song added successfully', updatedTimeslot });
+    } else {
+      res.status(404).json({ success: false, message: 'Timeslot not found' });
+    }
+  } catch (error) {
+    console.error('Failed to add producer song:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
